@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kategoriler - E-Ticaret</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+    <script src="search.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.html" class="logo">E-Ticaret</a>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    Ana Sayfa
+                </a>
+                <div class="categories-dropdown">
+                    <a href="categories.html" class="nav-item active">
+                        <i class="fas fa-th-large"></i>
+                        Kategoriler
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                </div>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    Ürünler
+                </a>
+                <a href="about.html" class="nav-item">
+                    <i class="fas fa-info-circle"></i>
+                    Hakkımızda
+                </a>
+                <a href="contact.html" class="nav-item">
+                    <i class="fas fa-envelope"></i>
+                    İletişim
+                </a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="search-box">
+                <input type="text" placeholder="Ürün ara...">
+                <button>
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="user-menu">
+                <div class="profile-menu" id="profileMenu" style="display: none;">
+                    <button class="profile-btn" onclick="toggleProfileDropdown()">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info">
+                            <span class="username" id="profileUsername">Kullanıcı</span>
+                            <span class="user-email" id="profileEmail">kullanici@email.com</span>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <div class="user-welcome">
+                                <span>Hoş geldiniz</span>
+                                <strong id="welcomeUsername">Kullanıcı</strong>
+                            </div>
+                        </div>
+                        <div class="profile-menu-items">
+                            <a href="profile.html" class="profile-menu-item">
+                                <i class="fas fa-user"></i>
+                                <span>Profilim</span>
+                            </a>
+                            <a href="orders.html" class="profile-menu-item">
+                                <i class="fas fa-shopping-bag"></i>
+                                <span>Siparişlerim</span>
+                            </a>
+                            <a href="wishlist.html" class="profile-menu-item">
+                                <i class="fas fa-heart"></i>
+                                <span>Favorilerim</span>
+                            </a>
+                            <a href="addresses.html" class="profile-menu-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Adreslerim</span>
+                            </a>
+                            <div class="menu-divider"></div>
+                            <button class="profile-menu-item logout" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Çıkış Yap</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="auth-links" id="authLinks">
+                    <a href="login.html" class="auth-btn" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Giriş Yap
+                    </a>
+                    <a href="register.html" class="auth-btn" id="registerBtn">
+                        <i class="fas fa-user-plus"></i>
+                        Kayıt Ol
+                    </a>
+                </div>
+            </div>
+            <div class="cart-icon">
+                <a href="cart.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Kategoriler Başlık -->
+        <section class="categories-header">
+            <div class="container">
+                <h1>Kategoriler</h1>
+                <p>Tüm kategorilerimizi keşfedin</p>
+            </div>
+        </section>
+
+        <!-- Kategoriler Grid -->
+        <section class="categories-section">
+            <div class="container">
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Kategoriler dinamik olarak yüklenecek -->
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Kategoriler yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Hakkımızda</h3>
+                <p>Kaliteli ürünleri uygun fiyatlarla sizlere sunuyoruz.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Hızlı Linkler</h3>
+                <ul>
+                    <li><a href="products.html">Ürünler</a></li>
+                    <li><a href="about.html">Hakkımızda</a></li>
+                    <li><a href="contact.html">İletişim</a></li>
+                    <li><a href="privacy.html">Gizlilik Politikası</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>İletişim</h3>
+                <p>Email: info@eticaret.com</p>
+                <p>Tel: 0212 123 45 67</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Bülten</h3>
+                <p>Yeni ürün ve kampanyalardan haberdar olun</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="E-posta adresiniz">
+                    <button type="submit">Abone Ol</button>
+                </form>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Sayfa yüklendiğinde kategorileri yükle
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCategories();
+        updateUserInterface();
+    });
+
+    // Kategorileri yükleme fonksiyonu
+    async function loadCategories() {
+        const categoriesGrid = document.getElementById('categoriesGrid');
+        
+        // Örnek kategori verileri (gerçek uygulamada API'den gelecek)
+        const categories = [
+            {
+                id: 1,
+                name: 'Mobilya',
+                description: 'Ev ve ofis mobilyaları',
+                image: 'images/categories/furniture.jpg',
+                icon: 'fas fa-couch'
+            },
+            {
+                id: 2,
+                name: 'Elektronik',
+                description: 'Elektronik ürünler ve aksesuarlar',
+                image: 'images/categories/electronics.jpg',
+                icon: 'fas fa-laptop'
+            },
+            {
+                id: 3,
+                name: 'Mutfak',
+                description: 'Mutfak gereçleri ve ekipmanları',
+                image: 'images/categories/kitchen.jpg',
+                icon: 'fas fa-utensils'
+            },
+            {
+                id: 4,
+                name: 'Dekorasyon',
+                description: 'Ev dekorasyon ürünleri',
+                image: 'images/categories/decoration.jpg',
+                icon: 'fas fa-home'
+            },
+            {
+                id: 5,
+                name: 'Aydınlatma',
+                description: 'Modern aydınlatma ürünleri',
+                image: 'images/categories/lighting.jpg',
+                icon: 'fas fa-lightbulb'
+            },
+            {
+                id: 6,
+                name: 'Tekstil',
+                description: 'Ev tekstili ürünleri',
+                image: 'images/categories/textile.jpg',
+                icon: 'fas fa-tshirt'
+            }
+        ];
+
+        // Loading durumunu kaldır
+        categoriesGrid.innerHTML = '';
+
+        // Kategorileri ekle
+        categories.forEach(category => {
+            const categoryCard = document.createElement('div');
+            categoryCard.className = 'category-card';
+            categoryCard.innerHTML = `
+                <div class="category-image">
+                    <img src="${category.image}" alt="${category.name}" onerror="handleImageError(this, 'category')">
+                    <div class="category-overlay">
+                        <i class="${category.icon}"></i>
+                    </div>
+                </div>
+                <div class="category-content">
+                    <h3>${category.name}</h3>
+                    <p>${category.description}</p>
+                    <a href="products.html?category=${category.id}" class="category-btn">
+                        Ürünleri Gör
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            `;
+            categoriesGrid.appendChild(categoryCard);
+        });
+    }
+
+    // Profil menüsü fonksiyonları
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('active');
+    }
+
+    // Kullanıcı durumunu kontrol et ve arayüzü güncelle
+    function updateUserInterface() {
+        const profileMenu = document.getElementById('profileMenu');
+        const authLinks = document.getElementById('authLinks');
+        const token = localStorage.getItem('token');
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+        if (token) {
+            profileMenu.style.display = 'block';
+            authLinks.style.display = 'none';
+            
+            document.getElementById('profileUsername').textContent = userData.name || 'Kullanıcı';
+            document.getElementById('profileEmail').textContent = userData.email || '';
+            document.getElementById('welcomeUsername').textContent = userData.name || 'Kullanıcı';
+        } else {
+            profileMenu.style.display = 'none';
+            authLinks.style.display = 'flex';
+        }
+    }
+
+    // Çıkış yapma fonksiyonu
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userData');
+        updateUserInterface();
+        window.location.href = 'index.html';
+    }
+
+    // Resim yükleme hatası yönetimi
+    function handleImageError(img, type = 'product') {
+        const placeholders = {
+            'brand': 'https://via.placeholder.com/150x50?text=Marka',
+            'user': 'https://via.placeholder.com/80x80?text=Kullanıcı',
+            'product': 'https://via.placeholder.com/300x300?text=Ürün',
+            'category': 'https://via.placeholder.com/300x200?text=Kategori'
+        };
+        img.src = placeholders[type];
+        img.onerror = null;
+    }
+    </script>
+</body>
+</html> 

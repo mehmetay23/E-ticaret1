@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sepetim - E-Ticaret</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <span class="logo-text">E-Ticaret</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Ana Sayfa
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="cart-page">
+        <div class="cart-container">
+            <div class="cart-header">
+                <h1><i class="fas fa-shopping-cart"></i> Sepetim</h1>
+                <a href="index.html" class="continue-shopping">
+                    <i class="fas fa-arrow-left"></i>
+                    Alışverişe Devam Et
+                </a>
+            </div>
+            
+            <div class="cart-content">
+                <div class="cart-main">
+                    <div class="cart-items" id="cartItems">
+                        <!-- Sepet öğeleri JavaScript ile buraya eklenecek -->
+                    </div>
+
+                    <div class="cart-summary">
+                        <div class="summary-header">
+                            <h2><i class="fas fa-receipt"></i> Sipariş Özeti</h2>
+                        </div>
+                        
+                        <div class="summary-content">
+                            <div class="summary-row">
+                                <span>Ara Toplam:</span>
+                                <span id="subtotal" class="amount">₺0,00</span>
+                            </div>
+                            
+                            <div class="summary-row shipping-row">
+                                <div class="shipping-info">
+                                    <span>
+                                        <i class="fas fa-truck"></i> Kargo:
+                                    </span>
+                                    <small class="free-shipping-note">
+                                        (150₺ üzeri alışverişlerde kargo bedava!)
+                                    </small>
+                                </div>
+                                <span id="shipping" class="amount">₺0,00</span>
+                            </div>
+                            
+                            <div class="summary-row">
+                                <span>KDV (%18):</span>
+                                <span id="tax" class="amount">₺0,00</span>
+                            </div>
+                            
+                            <div class="summary-divider"></div>
+                            
+                            <div class="summary-row total">
+                                <span>Genel Toplam:</span>
+                                <span id="total" class="amount">₺0,00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-footer">
+                            <button onclick="cart.proceedToCheckout()" class="checkout-btn">
+                                <i class="fas fa-lock"></i>
+                                Güvenli Ödeme
+                            </button>
+                            
+                            <div class="secure-shopping">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>%100 Güvenli Alışveriş</span>
+                            </div>
+                            
+                            <div class="payment-methods">
+                                <i class="fab fa-cc-visa"></i>
+                                <i class="fab fa-cc-mastercard"></i>
+                                <i class="fab fa-cc-amex"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="utils.js"></script>
+    <script src="cart.js"></script>
+</body>
+</html> 

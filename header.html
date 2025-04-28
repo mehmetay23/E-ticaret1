@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-left">
+            <a href="/" class="logo">E-Ticaret</a>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/" class="nav-item">
+                <i class="fas fa-home"></i>
+                Ana Sayfa
+            </a>
+
+            <div class="nav-item dropdown">
+                <a href="#" class="dropdown-toggle">
+                    <i class="fas fa-th"></i>
+                    Kategoriler
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+            </div>
+
+            <a href="/products" class="nav-item">
+                <i class="fas fa-box"></i>
+                Ürünler
+            </a>
+
+            <a href="/about" class="nav-item">
+                <i class="fas fa-info-circle"></i>
+                Hakkımızda
+            </a>
+
+            <a href="/contact" class="nav-item">
+                <i class="fas fa-envelope"></i>
+                İletişim
+            </a>
+        </nav>
+
+        <div class="nav-right">
+            <div class="search-box">
+                <input type="text" placeholder="Ürün ara...">
+                <button type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <div class="user-menu">
+                <button class="user-btn">
+                    <i class="fas fa-user"></i>
+                    Kullanıcı
+                </button>
+            </div>
+
+            <div class="cart-icon">
+                <a href="/cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Chat Widget -->
+    <div class="chat-toggle" id="chatToggle">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header">
+            <h3>Yardımcı Asistan</h3>
+            <button onclick="toggleChat()" style="background: none; border: none; color: white;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be added here dynamically -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Mesajınızı yazın...">
+            <button onclick="sendMessage()" id="sendButton">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+    let isAuthenticated = false;
+    let userToken = localStorage.getItem('token');
+
+    if (userToken) {
+        isAuthenticated = true;
+    }
+
+    function toggleChat() {
+        const widget = document.getElementById('chatWidget');
+        widget.classList.toggle('active');
+    }
+
+    document.getElementById('chatToggle').addEventListener('click', toggleChat);
+
+    // Enter tuşu ile mesaj gönderme
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    function addMessage(message, isUser = false) {
+        const messagesDiv = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user' : ''}`;
+        
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        // HTML içeriğini güvenli bir şekilde ayarla
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.innerHTML = message; // HTML içeriğini doğrudan ayarla
+        
+        const timeDiv = document.createElement('div');
+        timeDiv.className = 'message-time';
+        timeDiv.textContent = time;
+        
+        contentDiv.appendChild(timeDiv);
+        messageDiv.appendChild(contentDiv);
+        
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function sendMessage() {
+        if (!isAuthenticated) {
+            addMessage("Sohbet edebilmek için giriş yapmalısınız.");
+            return;
+        }
+
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        const sendButton = document.getElementById('sendButton');
+        
+        if (message === '') return;
+        
+        // Kullanıcı mesajını göster
+        addMessage(message, true);
+        
+        // Input'u temizle ve butonu devre dışı bırak
+        input.value = '';
+        sendButton.disabled = true;
+        
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                body: JSON.stringify({ message })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                // Bot yanıtını göster
+                addMessage(data.response);
+            } else {
+                addMessage('Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
+            }
+        } catch (error) {
+            console.error('Chat error:', error);
+            addMessage('Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
+        } finally {
+            sendButton.disabled = false;
+        }
+    }
+
+    // Başlangıç mesajı
+    if (isAuthenticated) {
+        addMessage("Merhaba! Size nasıl yardımcı olabilirim?");
+    } else {
+        addMessage("Sohbet edebilmek için lütfen giriş yapın.");
+    }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hakkımızda - E-Ticaret</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html" class="logo-link">
+                <span class="logo-text">E-Ticaret</span>
+            </a>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Ana Sayfa</span>
+            </a>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="dropdown-toggle">
+                    <i class="fas fa-th-large"></i>
+                    <span>Kategoriler</span>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item">Mobilya</a>
+                    <a href="#" class="dropdown-item">Aydınlatma</a>
+                    <a href="#" class="dropdown-item">Ev Dekorasyon</a>
+                    <a href="#" class="dropdown-item">Mutfak</a>
+                </div>
+            </div>
+            
+            <a href="products.html" class="nav-item">
+                <i class="fas fa-box"></i>
+                <span>Ürünler</span>
+            </a>
+            
+            <a href="about.html" class="nav-item active">
+                <i class="fas fa-info-circle"></i>
+                <span>Hakkımızda</span>
+            </a>
+            
+            <a href="contact.html" class="nav-item">
+                <i class="fas fa-envelope"></i>
+                <span>İletişim</span>
+            </a>
+        </div>
+        
+        <div class="nav-right">
+            <div class="search-box">
+                <input type="text" placeholder="Ürün ara...">
+                <button>
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <a href="cart.html" class="cart-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="about-section">
+            <div class="about-container">
+                <div class="about-header">
+                    <h1>Hakkımızda</h1>
+                    <p>Müşteri memnuniyetini ön planda tutarak, kaliteli ürünleri uygun fiyatlarla sunmayı hedefliyoruz.</p>
+                </div>
+
+                <div class="about-grid">
+                    <div class="about-image">
+                        <img src="images/about-image.jpg" alt="Mağazamız">
+                    </div>
+                    <div class="about-content">
+                        <h2>Biz Kimiz?</h2>
+                        <p>2023 yılında kurulan şirketimiz, müşterilerimize en iyi alışveriş deneyimini sunmak için çalışıyor. Geniş ürün yelpazemiz ve profesyonel ekibimizle sizlere hizmet vermekten mutluluk duyuyoruz.</p>
+                        
+                        <div class="about-features">
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h3>Hızlı Teslimat</h3>
+                                    <p>Siparişleriniz en kısa sürede adresinize teslim edilir.</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h3>Güvenli Alışveriş</h3>
+                                    <p>SSL sertifikalı güvenli ödeme sistemi.</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-headset"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h3>7/24 Destek</h3>
+                                    <p>Müşteri hizmetleri ekibimiz her zaman yanınızda.</p>
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">
+                                    <i class="fas fa-undo"></i>
+                                </div>
+                                <div class="feature-text">
+                                    <h3>Kolay İade</h3>
+                                    <p>14 gün içinde ücretsiz iade imkanı.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="team-section">
+            <div class="about-container">
+                <div class="about-header">
+                    <h2>Ekibimiz</h2>
+                    <p>Profesyonel ve deneyimli ekibimizle sizlere en iyi hizmeti sunuyoruz.</p>
+                </div>
+
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="member-image">
+                            <img src="images/team/member1.jpg" alt="Takım Üyesi">
+                        </div>
+                        <div class="member-info">
+                            <h3>Ahmet Yılmaz</h3>
+                            <p>Genel Müdür</p>
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-linkedin"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Diğer takım üyeleri buraya eklenebilir -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <!-- Footer içeriği index.html ile aynı -->
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html> 

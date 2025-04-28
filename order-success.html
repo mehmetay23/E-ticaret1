@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Başarılı - E-Ticaret</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .success-page {
+            min-height: 100vh;
+            background: #f8f9fa;
+            padding: 2rem;
+        }
+
+        .success-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 2rem;
+        }
+
+        .success-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #10B981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .success-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .success-header h1 {
+            color: #1a202c;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .order-number {
+            color: #6366F1;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .detail-box {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .detail-box h3 {
+            color: #4a5568;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-box h3 i {
+            color: #6366F1;
+        }
+
+        .detail-content {
+            color: #1a202c;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .order-items {
+            margin-bottom: 2rem;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            gap: 1rem;
+        }
+
+        .order-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-details h4 {
+            margin: 0 0 0.25rem 0;
+            color: #1a202c;
+            font-size: 1rem;
+        }
+
+        .item-details p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .order-summary {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .summary-row.total {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e2e8f0;
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 1.1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .action-button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .view-orders {
+            background: #6366F1;
+            color: white;
+        }
+
+        .view-orders:hover {
+            background: #4F46E5;
+            transform: translateY(-2px);
+        }
+
+        .continue-shopping {
+            background: #f8fafc;
+            color: #1a202c;
+            border: 2px solid #e2e8f0;
+        }
+
+        .continue-shopping:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .success-container {
+                padding: 1.5rem;
+            }
+
+            .order-details {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="success-page">
+        <div class="success-container">
+            <div class="success-header">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h1>Siparişiniz Başarıyla Oluşturuldu!</h1>
+                <p class="order-number">Sipariş numaranız: <strong id="orderNumber">#12345</strong></p>
+            </div>
+
+            <div class="order-details">
+                <div class="detail-box">
+                    <h3><i class="fas fa-calendar"></i> Sipariş Tarihi</h3>
+                    <div class="detail-content" id="orderDate">
+                        24 Aralık 2024, 14:30
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <h3><i class="fas fa-credit-card"></i> Ödeme Yöntemi</h3>
+                    <div class="detail-content">
+                        Kredi Kartı
+                    </div>
+                </div>
+
+                <div class="detail-box">
+                    <h3><i class="fas fa-map-marker-alt"></i> Teslimat Adresi</h3>
+                    <div class="detail-content" id="deliveryAddress">
+                        Mehmet Yılmaz<br>
+                        Atatürk Cad. No:123<br>
+                        Çankaya/Ankara
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-items" id="orderItems">
+                <!-- Ürünler JavaScript ile eklenecek -->
+            </div>
+
+            <div class="order-summary">
+                <div class="summary-row">
+                    <span>Ara Toplam</span>
+                    <span id="subtotal">₺0,00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Kargo</span>
+                    <span id="shipping">₺0,00</span>
+                </div>
+                <div class="summary-row">
+                    <span>KDV (%18)</span>
+                    <span id="tax">₺0,00</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Toplam</span>
+                    <span id="total">₺0,00</span>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="orders.html" class="action-button view-orders">
+                    <i class="fas fa-list"></i>
+                    Siparişlerim
+                </a>
+                <a href="index.html" class="action-button continue-shopping">
+                    <i class="fas fa-shopping-cart"></i>
+                    Alışverişe Devam Et
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="order-success.js"></script>
+</body>
+</html> 

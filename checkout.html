@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ödeme - E-Ticaret</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <span class="logo-text">E-Ticaret</span>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    Ana Sayfa
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="checkout-page">
+        <div class="checkout-container">
+            <div class="checkout-content">
+                <!-- Sol Taraf - Teslimat Bilgileri -->
+                <div class="delivery-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-map-marker-alt"></i> Teslimat Bilgileri</h2>
+                    </div>
+
+                    <div class="address-list">
+                        <h3>Kayıtlı Adreslerim</h3>
+                        <div id="savedAddresses" class="saved-addresses">
+                            <!-- Kayıtlı adresler JavaScript ile buraya eklenecek -->
+                        </div>
+                        
+                        <button class="add-address-btn" onclick="checkout.showAddressForm()">
+                            <i class="fas fa-plus"></i>
+                            Yeni Adres Ekle
+                        </button>
+                    </div>
+
+                    <div id="addressForm" class="address-form" style="display: none;">
+                        <h3>Yeni Adres</h3>
+                        <form onsubmit="checkout.saveAddress(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fullName">Ad Soyad</label>
+                                    <input type="text" id="fullName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Telefon</label>
+                                    <input type="tel" id="phone" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="city">İl</label>
+                                    <select id="city" required>
+                                        <option value="">İl Seçin</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="district">İlçe</label>
+                                    <select id="district" required disabled>
+                                        <option value="">İlçe Seçin</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="address">Adres</label>
+                                <textarea id="address" rows="3" required></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="cancel-btn" onclick="checkout.hideAddressForm()">
+                                    <i class="fas fa-times"></i>
+                                    İptal
+                                </button>
+                                <button type="submit" class="save-btn">
+                                    <i class="fas fa-save"></i>
+                                    Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Sağ Taraf - Sipariş Özeti -->
+                <div class="order-summary">
+                    <div class="section-header">
+                        <h2><i class="fas fa-shopping-cart"></i> Sipariş Özeti</h2>
+                    </div>
+
+                    <div class="summary-items" id="orderItems">
+                        <!-- Sipariş öğeleri JavaScript ile buraya eklenecek -->
+                    </div>
+
+                    <div class="summary-totals">
+                        <div class="summary-row">
+                            <span>Ara Toplam:</span>
+                            <span id="subtotal">₺0,00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>
+                                <i class="fas fa-truck"></i>
+                                Kargo:
+                                <small class="shipping-info">(150₺ üzeri kargo bedava)</small>
+                            </span>
+                            <span id="shipping">₺0,00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>KDV (%18):</span>
+                            <span id="tax">₺0,00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Genel Toplam:</span>
+                            <span id="total">₺0,00</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-footer">
+                        <button onclick="checkout.proceedToPayment()" class="proceed-btn">
+                            <i class="fas fa-lock"></i>
+                            Güvenli Ödeme
+                        </button>
+                        <p class="secure-payment">
+                            <i class="fas fa-shield-alt"></i>
+                            %100 Güvenli Alışveriş
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="utils.js"></script>
+    <script src="cities.js"></script>
+    <script src="checkout.js"></script>
+</body>
+</html> 

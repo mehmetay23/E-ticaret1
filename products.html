@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ürünler - E-Ticaret</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="search.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html" class="logo-link">
+                <span class="logo-text">E-Ticaret</span>
+            </a>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Ana Sayfa</span>
+            </a>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="dropdown-toggle">
+                    <i class="fas fa-th-large"></i>
+                    <span>Kategoriler</span>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item">Mobilya</a>
+                    <a href="#" class="dropdown-item">Aydınlatma</a>
+                    <a href="#" class="dropdown-item">Ev Dekorasyon</a>
+                    <a href="#" class="dropdown-item">Mutfak</a>
+                </div>
+            </div>
+            
+            <a href="products.html" class="nav-item active">
+                <i class="fas fa-box"></i>
+                <span>Ürünler</span>
+            </a>
+            
+            <a href="about.html" class="nav-item">
+                <i class="fas fa-info-circle"></i>
+                <span>Hakkımızda</span>
+            </a>
+            
+            <a href="contact.html" class="nav-item">
+                <i class="fas fa-envelope"></i>
+                <span>İletişim</span>
+            </a>
+        </div>
+        
+        <div class="nav-right">
+            <div class="search-box">
+                <input type="text" placeholder="Ürün ara...">
+                <button>
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <a href="cart.html" class="cart-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Filtreler -->
+        <div class="search-filter-container">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Ürün ara...">
+                <button class="search-button">
+                    <i class="fas fa-search"></i>
+                    Ara
+                </button>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-group">
+                    <h3>Kategoriler</h3>
+                    <div class="category-filters">
+                        <button class="category-btn active" data-category-id="all">Tümü</button>
+                        <!-- Kategoriler JavaScript ile eklenecek -->
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Fiyat Aralığı</h3>
+                    <div class="price-filter">
+                        <input type="number" name="min" placeholder="Min">
+                        <span>-</span>
+                        <input type="number" name="max" placeholder="Max">
+                        <button class="apply-filter">Uygula</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Sıralama</h3>
+                    <select name="sorting">
+                        <option value="">Varsayılan</option>
+                        <option value="price-asc">Fiyat (Düşükten Yükseğe)</option>
+                        <option value="price-desc">Fiyat (Yüksekten Düşüğe)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ürün Grid -->
+        <div class="products-container">
+            <div class="product-grid" id="productGrid">
+                <!-- Ürünler JavaScript ile eklenecek -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Hakkımızda</h3>
+                <p>Kaliteli ürünleri uygun fiyatlarla sizlere sunuyoruz.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Hızlı Linkler</h3>
+                <ul>
+                    <li><a href="products.html">Ürünler</a></li>
+                    <li><a href="about.html">Hakkımızda</a></li>
+                    <li><a href="contact.html">İletişim</a></li>
+                    <li><a href="privacy.html">Gizlilik Politikası</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>İletişim</h3>
+                <p>Email: info@eticaret.com</p>
+                <p>Tel: 0212 123 45 67</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 E-Ticaret. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
