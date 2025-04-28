@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Ticaret</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+    <script src="search.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="index.html" class="logo">E-Ticaret</a>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    Ana Sayfa
+                </a>
+                <div class="categories-dropdown">
+                    <a href="categories.html" class="nav-item">
+                        <i class="fas fa-th-large"></i>
+                        Kategoriler
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                </div>
+                <a href="products.html" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    Ürünler
+                </a>
+                <a href="about.html" class="nav-item">
+                    <i class="fas fa-info-circle"></i>
+                    Hakkımızda
+                </a>
+                <a href="contact.html" class="nav-item">
+                    <i class="fas fa-envelope"></i>
+                    İletişim
+                </a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="search-box">
+                <input type="text" placeholder="Ürün ara...">
+                <button>
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="user-menu">
+                <!-- Giriş yapmış kullanıcı için profil menüsü -->
+                <div class="profile-menu" id="profileMenu" style="display: none;">
+                    <button class="profile-btn" onclick="toggleProfileDropdown()">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info">
+                            <span class="username" id="profileUsername">Kullanıcı</span>
+                            <span class="user-email" id="profileEmail">kullanici@email.com</span>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <div class="user-welcome">
+                                <span>Hoş geldiniz</span>
+                                <strong id="welcomeUsername">Kullanıcı</strong>
+                            </div>
+                        </div>
+                        <div class="profile-menu-items">
+                            <a href="profile.html" class="profile-menu-item">
+                                <i class="fas fa-user"></i>
+                                <span>Profilim</span>
+                            </a>
+                            <a href="orders.html" class="profile-menu-item">
+                                <i class="fas fa-shopping-bag"></i>
+                                <span>Siparişlerim</span>
+                                <span class="badge">2</span>
+                            </a>
+                            <a href="wishlist.html" class="profile-menu-item">
+                                <i class="fas fa-heart"></i>
+                                <span>Favorilerim</span>
+                            </a>
+                            <a href="addresses.html" class="profile-menu-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Adreslerim</span>
+                            </a>
+                            <div class="menu-divider"></div>
+                            <button class="profile-menu-item logout" onclick="handleLogout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Çıkış Yap</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Giriş yapmamış kullanıcı için auth butonları -->
+                <div class="auth-links" id="authLinks">
+                    <a href="login.html" class="auth-btn" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Giriş Yap
+                    </a>
+                    <a href="register.html" class="auth-btn" id="registerBtn">
+                        <i class="fas fa-user-plus"></i>
+                        Kayıt Ol
+                    </a>
+                </div>
+            </div>
+            <div class="cart-icon">
+                <a href="cart.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chat Widget -->
+    <div class="chat-toggle" id="chatToggle" onclick="toggleChat()">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header">
+            <h3>Yardımcı Asistan</h3>
+            <button onclick="toggleChat()" style="background: none; border: none; color: white;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be added here dynamically -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Mesajınızı yazın..." onkeypress="if(event.key === 'Enter') sendMessage()">
+            <button onclick="sendMessage()" id="sendButton">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Ana içerik buraya gelecek -->
+    
+    <script>
+    // Chat fonksiyonları
+    let isAuthenticated = false;
+    let userToken = null;
+    let chatHistory = [];
+
+    // Sayfa yüklendiğinde token kontrolü
+    document.addEventListener('DOMContentLoaded', function() {
+        userToken = localStorage.getItem('token');
+        isAuthenticated = !!userToken;
+        updateUserInterface();
+        
+        // Chat widget'ı başlat
+        if (document.getElementById('chatWidget')) {
+            initializeChat();
+        }
+    });
+
+    function initializeChat() {
+        if (isAuthenticated) {
+            if (document.getElementById('chatMessages').children.length === 0) {
+                addMessage('Merhaba! Size nasıl yardımcı olabilirim?', false);
+            }
+        } else {
+            addMessage('Sohbet edebilmek için lütfen giriş yapın.', false);
+        }
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+        const message = input.value.trim();
+        
+        if (message === '') return;
+        
+        // Kullanıcı mesajını göster
+        addMessage(message, true);
+        
+        // Input'u temizle ve butonu devre dışı bırak
+        input.value = '';
+        sendButton.disabled = true;
+        
+        try {
+            // Token kontrolü
+            if (!isAuthenticated || !userToken) {
+                addMessage('Sohbet edebilmek için giriş yapmalısınız.', false);
+                sendButton.disabled = false;
+                return;
+            }
+
+            // Yükleniyor mesajı
+            const loadingId = addMessage('Yanıt hazırlanıyor...', false);
+            
+            // API'ye istek at
+            const response = await fetch('http://localhost:3000/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                body: JSON.stringify({ message })
+            });
+
+            // Yükleniyor mesajını kaldır
+            removeMessage(loadingId);
+            
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    // Token geçersiz veya süresi dolmuş
+                    isAuthenticated = false;
+                    userToken = null;
+                    localStorage.removeItem('token');
+                    addMessage('Oturumunuz sona erdi. Lütfen tekrar giriş yapın.', false);
+                    updateUserInterface();
+                    return;
+                }
+                
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Sunucu yanıt vermedi');
+            }
+
+            const data = await response.json();
+            if (!data.response) {
+                throw new Error('Geçersiz yanıt formatı');
+            }
+
+            // Chatbot yanıtını ekle
+            addMessage(data.response, false);
+            
+        } catch (error) {
+            console.error('Chat error:', error);
+            addMessage('Üzgünüm, bir hata oluştu: ' + error.message, false);
+        } finally {
+            // Her durumda butonu tekrar aktif et
+            sendButton.disabled = false;
+        }
+    }
+
+    function addMessage(message, isUser = false) {
+        const messagesDiv = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        const messageId = Date.now();
+        
+        messageDiv.id = `message-${messageId}`;
+        messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+        
+        // HTML içeriğini güvenli bir şekilde ayarla
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.innerHTML = message; // HTML içeriğini doğrudan ayarla
+        
+        const timeDiv = document.createElement('div');
+        timeDiv.className = 'message-time';
+        timeDiv.textContent = new Date().toLocaleTimeString();
+        
+        contentDiv.appendChild(timeDiv);
+        messageDiv.appendChild(contentDiv);
+        
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        
+        return messageId;
+    }
+
+    function removeMessage(messageId) {
+        const messageDiv = document.getElementById(`message-${messageId}`);
+        if (messageDiv) {
+            messageDiv.remove();
+        }
+    }
+
+    function toggleChat() {
+        const widget = document.getElementById('chatWidget');
+        widget.classList.toggle('active');
+    }
+
+    // Profil menüsü fonksiyonları
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('active');
+    }
+
+    // Kullanıcı durumunu kontrol et ve arayüzü güncelle
+    function updateUserInterface() {
+        const profileMenu = document.getElementById('profileMenu');
+        const authLinks = document.getElementById('authLinks');
+        const token = localStorage.getItem('token');
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+        if (token) {
+            // Kullanıcı giriş yapmış
+            profileMenu.style.display = 'block';
+            authLinks.style.display = 'none';
+            
+            // Kullanıcı bilgilerini güncelle
+            document.getElementById('profileUsername').textContent = userData.name || 'Kullanıcı';
+            document.getElementById('profileEmail').textContent = userData.email || '';
+            document.getElementById('welcomeUsername').textContent = userData.name || 'Kullanıcı';
+        } else {
+            // Kullanıcı giriş yapmamış
+            profileMenu.style.display = 'none';
+            authLinks.style.display = 'flex';
+        }
+    }
+
+    // Çıkış yapma fonksiyonu
+    function handleLogout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userData');
+        updateUserInterface();
+        window.location.href = 'index.html';
+    }
+
+    // Sayfa yüklendiğinde kullanıcı arayüzünü güncelle
+    document.addEventListener('DOMContentLoaded', function() {
+        updateUserInterface();
+
+        // Profil dropdown'ını dışarı tıklandığında kapat
+        document.addEventListener('click', function(event) {
+            const profileMenu = document.getElementById('profileMenu');
+            const dropdown = document.getElementById('profileDropdown');
+            
+            if (!profileMenu.contains(event.target) && dropdown.classList.contains('active')) {
+                dropdown.classList.remove('active');
+            }
+        });
+    });
+
+    function handleImageError(img, type = 'product') {
+        const placeholders = {
+            'brand': 'https://via.placeholder.com/150x50?text=Marka',
+            'user': 'https://via.placeholder.com/80x80?text=Kullanıcı',
+            'product': 'https://via.placeholder.com/300x300?text=Ürün',
+            'category': 'https://via.placeholder.com/300x200?text=Kategori'
+        };
+        img.src = placeholders[type];
+        img.onerror = null; // Sonsuz döngüyü önle
+    }
+    </script>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Yeni Sezon Ürünleri</h1>
+                <p>En yeni ürünleri keşfedin, en iyi fiyatlarla alışveriş yapın!</p>
+                <a href="products.html" class="cta-button">Alışverişe Başla</a>
+            </div>
+        </section>
+
+        <!-- Kategoriler -->
+        <section class="categories">
+            <div class="container">
+                <h2 class="section-title">Popüler Kategoriler</h2>
+                <div class="category-grid">
+                    <!-- Kategoriler JavaScript ile yüklenecek -->
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Kategoriler yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Öne Çıkan Ürünler -->
+        <section class="featured-products">
+            <div class="section-header">
+                <h2>Öne Çıkan Ürünler</h2>
+                <p>En çok tercih edilen ürünlerimizi keşfedin</p>
+            </div>
+            
+            <div class="featured-grid">
+                <div class="featured-card">
+                    <div class="featured-badge">
+                        <i class="fas fa-star"></i>
+                        Popüler
+                    </div>
+                    <div class="featured-image">
+                        <img src="images/products/koltuk.jpg" alt="Modern Koltuk Takımı" onerror="this.src='images/placeholder.jpg'">
+                    </div>
+                    <div class="featured-content">
+                        <h3>Modern Koltuk Takımı</h3>
+                        <p class="featured-description">Şık tasarımı ve konforu ile evinize modern bir dokunuş katacak koltuk takımı.</p>
+                        <p class="featured-category">Oturma Odası</p>
+                        <div class="featured-price">
+                            <span class="price">₺14.999,99</span>
+                            <span class="installment">12 x ₺1.249,99</span>
+                        </div>
+                        <div class="featured-actions">
+                            <button class="add-to-cart" onclick="cart.addToCart({id: 1, name: 'Modern Koltuk Takımı', price: 14999.99})">
+                                <i class="fas fa-shopping-cart"></i>
+                                Sepete Ekle
+                            </button>
+                            <button class="add-to-wishlist">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="featured-card">
+                    <div class="featured-badge new">
+                        <i class="fas fa-bolt"></i>
+                        Yeni
+                    </div>
+                    <div class="featured-image">
+                        <img src="images/products/avize.jpg" alt="LED Avize" onerror="this.src='images/placeholder.jpg'">
+                    </div>
+                    <div class="featured-content">
+                        <h3>LED Avize</h3>
+                        <p class="featured-description">Modern tasarımlı, enerji tasarruflu LED avize ile mekanlarınızı aydınlatın.</p>
+                        <p class="featured-category">Aydınlatma</p>
+                        <div class="featured-price">
+                            <span class="price">₺1.299,99</span>
+                            <span class="installment">6 x ₺216,66</span>
+                        </div>
+                        <div class="featured-actions">
+                            <button class="add-to-cart" onclick="cart.addToCart({id: 2, name: 'LED Avize', price: 1299.99})">
+                                <i class="fas fa-shopping-cart"></i>
+                                Sepete Ekle
+                            </button>
+                            <button class="add-to-wishlist">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="featured-card">
+                    <div class="featured-badge discount">
+                        <i class="fas fa-tag"></i>
+                        %20 İndirim
+                    </div>
+                    <div class="featured-image">
+                        <img src="images/products/yemek.jpg" alt="Yemek Takımı" onerror="this.src='images/placeholder.jpg'">
+                    </div>
+                    <div class="featured-content">
+                        <h3>Yemek Takımı</h3>
+                        <p class="featured-description">24 parça porselen yemek takımı ile sofralarınızı şıklaştırın.</p>
+                        <p class="featured-category">Mutfak</p>
+                        <div class="featured-price">
+                            <span class="old-price">₺999,99</span>
+                            <span class="price">₺899,99</span>
+                            <span class="installment">3 x ₺299,99</span>
+                        </div>
+                        <div class="featured-actions">
+                            <button class="add-to-cart" onclick="cart.addToCart({id: 3, name: 'Yemek Takımı', price: 899.99})">
+                                <i class="fas fa-shopping-cart"></i>
+                                Sepete Ekle
+                            </button>
+                            <button class="add-to-wishlist">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kampanyalar -->
+        <section class="campaigns">
+            <div class="campaign-grid">
+                <div class="campaign-card">
+                    <i class="fas fa-truck"></i>
+                    <h3>Ücretsiz Kargo</h3>
+                    <p>250 TL üzeri alışverişlerde</p>
+                </div>
+                <div class="campaign-card">
+                    <i class="fas fa-undo"></i>
+                    <h3>İade Garantisi</h3>
+                    <p>14 gün içinde ücretsiz iade</p>
+                </div>
+                <div class="campaign-card">
+                    <i class="fas fa-headset"></i>
+                    <h3>7/24 Destek</h3>
+                    <p>Her zaman yanınızdayız</p>
+                </div>
+                <div class="campaign-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Güvenli Ödeme</h3>
+                    <p>SSL güvenlik sertifikası</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Markalar -->
+        <section class="brands">
+            <h2>İş Ortaklarımız</h2>
+            <div class="brand-slider">
+                <div class="brand-grid">
+                    <img src="https://via.placeholder.com/150x50?text=Marka" alt="Marka">
+                    <img src="public/images/brands/brand2.png" alt="Marka 2" onerror="handleImageError(this, 'brand')">
+                    <img src="public/images/brands/brand3.png" alt="Marka 3" onerror="handleImageError(this, 'brand')">
+                    <img src="public/images/brands/brand4.png" alt="Marka 4" onerror="handleImageError(this, 'brand')">
+                    <img src="public/images/brands/brand5.png" alt="Marka 5" onerror="handleImageError(this, 'brand')">
+                </div>
+            </div>
+        </section>
+
+        <!-- Müşteri Yorumları -->
+        <section class="testimonials">
+            <h2>Müşteri Yorumları</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <img src="https://via.placeholder.com/40x40?text=User" alt="Kullanıcı 1" class="user-avatar" onerror="handleImageError(this, 'user')">
+                    <p class="testimonial-text">
+                        "Ürünler çok kaliteli ve hızlı teslimat yapılıyor. Kesinlikle tavsiye ederim!"
+                    </p>
+                    <p class="user-name">Ahmet Y.</p>
+                </div>
+                <div class="testimonial-card">
+                    <img src="public/images/users/user2.jpg" alt="Kullanıcı 2" class="user-avatar" onerror="handleImageError(this, 'user')">
+                    <p class="testimonial-text">
+                        "Müşteri hizmetleri çok ilgili, her sorunuma anında çözüm buldular."
+                    </p>
+                    <p class="user-name">Ayşe K.</p>
+                </div>
+                <div class="testimonial-card">
+                    <img src="public/images/users/user3.jpg" alt="Kullanıcı 3" class="user-avatar" onerror="handleImageError(this, 'user')">
+                    <p class="testimonial-text">
+                        "Fiyatlar uygun ve ürün çeşitliliği çok fazla. Sürekli alışveriş yapıyorum."
+                    </p>
+                    <p class="user-name">Mehmet S.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Hakkımızda</h3>
+                <p>Kaliteli ürünleri uygun fiyatlarla sizlere sunuyoruz.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Hızlı Linkler</h3>
+                <ul>
+                    <li><a href="products.html">Ürünler</a></li>
+                    <li><a href="about.html">Hakkımızda</a></li>
+                    <li><a href="contact.html">İletişim</a></li>
+                    <li><a href="privacy.html">Gizlilik Politikası</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>İletişim</h3>
+                <p>Email: info@eticaret.com</p>
+                <p>Tel: 0212 123 45 67</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Bülten</h3>
+                <p>Yeni ürün ve kampanyalardan haberdar olun</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="E-posta adresiniz">
+                    <button type="submit">Abone Ol</button>
+                </form>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+    <script src="search.js"></script>
+    <script>
+    function handleImageError(img, type = 'product') {
+        const placeholders = {
+            'brand': 'https://via.placeholder.com/150x50?text=Marka',
+            'user': 'https://via.placeholder.com/80x80?text=Kullanıcı',
+            'product': 'https://via.placeholder.com/300x300?text=Ürün',
+            'category': 'https://via.placeholder.com/300x200?text=Kategori'
+        };
+        img.src = placeholders[type];
+        img.onerror = null; // Sonsuz döngüyü önle
+    }
+    </script>
+</body>
+</html> 
