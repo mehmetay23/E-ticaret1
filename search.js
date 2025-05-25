@@ -1,14 +1,26 @@
 const search = {
+    allProducts: [], // Tüm ürünleri tutacak dizi
+
     init() {
         // Tüm arama kutularını seç
         const searchBoxes = document.querySelectorAll('.search-box input');
         const searchButtons = document.querySelectorAll('.search-box button');
 
+        // Tüm ürünleri yükle
+        this.loadAllProducts();
+
         // Her arama kutusuna event listener ekle
         searchBoxes.forEach(input => {
+            // Input değiştiğinde anında arama yap
+            input.addEventListener('input', (e) => {
+                this.performSearch(e.target.value);
+            });
+
+            // Enter tuşuna basıldığında
             input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    this.performSearch(input.value);
+                    e.preventDefault();
+                    this.performSearch(e.target.value);
                 }
             });
         });
@@ -22,16 +34,82 @@ const search = {
         });
     },
 
+    // Tüm ürünleri yükle
+    async loadAllProducts() {
+        try {
+            const response = await fetch('http://localhost:3000/api/products');
+            if (!response.ok) {
+                throw new Error('Ürünler yüklenemedi');
+            }
+            this.allProducts = await response.json();
+        } catch (error) {
+            console.error('Ürünler yüklenirken hata:', error);
+            this.showNotification('Ürünler yüklenirken bir hata oluştu');
+        }
+    },
+
     performSearch(query) {
         if (!query.trim()) {
-            this.showNotification('Lütfen arama yapmak için bir şeyler yazın');
+            // Arama kutusu boşsa tüm ürünleri göster
+            this.displayProducts(this.allProducts);
             return;
         }
 
-        // Arama sorgusunu URL'e ekle ve products.html'e yönlendir
-        const searchParams = new URLSearchParams();
-        searchParams.set('q', query.trim());
-        window.location.href = `products.html?${searchParams.toString()}`;
+        const searchTerm = query.toLowerCase().trim();
+        
+        // Ürünleri filtrele
+        const filteredProducts = this.allProducts.filter(product => {
+            const productName = (product.name || '').toLowerCase();
+            const productDesc = (product.description || '').toLowerCase();
+            const categoryName = (product.category_name || '').toLowerCase();
+
+            return productName.includes(searchTerm) || 
+                   productDesc.includes(searchTerm) || 
+                   categoryName.includes(searchTerm);
+        });
+
+        // Filtrelenmiş ürünleri göster
+        this.displayProducts(filteredProducts);
+    },
+
+    displayProducts(products) {
+        const productGrid = document.querySelector('.products-grid') || document.getElementById('productGrid');
+        if (!productGrid) {
+            console.warn('Ürün grid elementi bulunamadı');
+            return;
+        }
+
+        if (products.length === 0) {
+            this.toggleNoResults(true);
+            return;
+        }
+
+        // Sonuç bulunamadı mesajını gizle
+        this.toggleNoResults(false);
+
+        // Ürünleri göster
+        productGrid.innerHTML = products.map(product => `
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="${product.image_url || 'https://via.placeholder.com/300'}" 
+                         alt="${product.name}"
+                         onerror="this.src='https://via.placeholder.com/300'">
+                </div>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p class="category">${product.category_name || 'Genel'}</p>
+                    <p class="description">${product.description || ''}</p>
+                    <p class="price">${product.price.toLocaleString('tr-TR', {
+                        style: 'currency',
+                        currency: 'TRY'
+                    })}</p>
+                    <button onclick="addToCart(${product.id})" class="add-to-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        Sepete Ekle
+                    </button>
+                </div>
+            </div>
+        `).join('');
     },
 
     showNotification(message) {
@@ -43,44 +121,14 @@ const search = {
         }
     },
 
-    // Products sayfasında aramaları işle
-    handleProductSearch() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const searchQuery = urlParams.get('q');
-
-        if (searchQuery) {
-            // Arama kutusuna değeri yerleştir
-            const searchInputs = document.querySelectorAll('.search-box input');
-            searchInputs.forEach(input => input.value = searchQuery);
-
-            // Ürünleri filtrele
-            this.filterProducts(searchQuery);
-        }
-    },
-
-    filterProducts(query) {
-        const productCards = document.querySelectorAll('.product-card');
-        const searchRegex = new RegExp(query, 'i');
-        let hasResults = false;
-
-        productCards.forEach(card => {
-            const productName = card.querySelector('h3').textContent;
-            const productDesc = card.querySelector('.product-description')?.textContent || '';
-
-            if (searchRegex.test(productName) || searchRegex.test(productDesc)) {
-                card.style.display = 'block';
-                hasResults = true;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-
-        // Sonuç bulunamadı mesajını göster/gizle
-        this.toggleNoResults(!hasResults);
-    },
-
     toggleNoResults(show) {
         let noResultsEl = document.getElementById('noResults');
+        const productGrid = document.querySelector('.products-grid') || document.getElementById('productGrid');
+        
+        if (!productGrid) {
+            console.warn('Ürün grid elementi bulunamadı');
+            return;
+        }
         
         if (show) {
             if (!noResultsEl) {
@@ -92,7 +140,7 @@ const search = {
                     <h3>Sonuç Bulunamadı</h3>
                     <p>Aramanızla eşleşen ürün bulunamadı.</p>
                 `;
-                document.querySelector('.products-grid').appendChild(noResultsEl);
+                productGrid.appendChild(noResultsEl);
             }
             noResultsEl.style.display = 'flex';
         } else if (noResultsEl) {
@@ -104,9 +152,4 @@ const search = {
 // Sayfa yüklendiğinde
 document.addEventListener('DOMContentLoaded', () => {
     search.init();
-    
-    // Eğer products.html sayfasındaysak, arama işlemlerini başlat
-    if (window.location.pathname.includes('products.html')) {
-        search.handleProductSearch();
-    }
 }); 

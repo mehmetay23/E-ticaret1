@@ -3,114 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Ticaret</title>
+    <title>AlışverişAdresi</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="script.js"></script>
     <script src="auth.js"></script>
     <script src="search.js"></script>
+    <style>
+      .hero-modern {
+        position: relative;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background: url('https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80') center center/cover no-repeat;
+        filter: blur(1px) brightness(0.7);
+        z-index: 1;
+      }
+      .hero-content-modern {
+        position: relative;
+        z-index: 2;
+        background: rgba(40,40,40,0.72);
+        border-radius: 32px;
+        padding: 48px 32px 40px 32px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+        text-align: center;
+        max-width: 600px;
+        width: 90vw;
+      }
+      .hero-content-modern h1 {
+        color: #fff;
+        font-size: 3rem;
+        margin-bottom: 18px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      }
+      .hero-content-modern p {
+        color: #f0f0f0;
+        font-size: 1.3rem;
+        margin-bottom: 32px;
+      }
+      .cta-button {
+        display: inline-block;
+        background: orange;
+        color: #fff;
+        font-size: 1.3rem;
+        padding: 16px 40px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+        transition: background 0.2s;
+      }
+      .cta-button:hover {
+        background: #ff9800;
+      }
+      @media (max-width: 600px) {
+        .hero-content-modern h1 { font-size: 2rem; }
+        .hero-content-modern { padding: 24px 8px 24px 8px; max-width: 98vw; }
+      }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="nav-left">
-            <a href="index.html" class="logo">E-Ticaret</a>
+        <div class="navbar-flex" style="display: flex; align-items: center; width: 100%; justify-content: space-between; gap: 2rem;">
+            <a href="index.html" class="logo" style="margin-right: 2rem;">AlışverişAdresi</a>
             <div class="nav-menu">
                 <a href="index.html" class="nav-item">
                     <i class="fas fa-home"></i>
-                    Ana Sayfa
+                    <span>Ana Sayfa</span>
                 </a>
-                <div class="categories-dropdown">
-                    <a href="categories.html" class="nav-item">
-                        <i class="fas fa-th-large"></i>
-                        Kategoriler
-                        <i class="fas fa-chevron-down"></i>
-                    </a>
-                </div>
                 <a href="products.html" class="nav-item">
                     <i class="fas fa-box"></i>
-                    Ürünler
+                    <span>Ürünler</span>
                 </a>
                 <a href="about.html" class="nav-item">
                     <i class="fas fa-info-circle"></i>
-                    Hakkımızda
+                    <span>Hakkımızda</span>
                 </a>
                 <a href="contact.html" class="nav-item">
                     <i class="fas fa-envelope"></i>
-                    İletişim
+                    <span>İletişim</span>
                 </a>
             </div>
-        </div>
-        <div class="nav-right">
-            <div class="search-box">
-                <input type="text" placeholder="Ürün ara...">
-                <button>
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-            <div class="user-menu">
-                <!-- Giriş yapmış kullanıcı için profil menüsü -->
-                <div class="profile-menu" id="profileMenu" style="display: none;">
-                    <button class="profile-btn" onclick="toggleProfileDropdown()">
-                        <div class="profile-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="profile-info">
-                            <span class="username" id="profileUsername">Kullanıcı</span>
-                            <span class="user-email" id="profileEmail">kullanici@email.com</span>
-                        </div>
-                        <i class="fas fa-chevron-down"></i>
+            <div class="nav-right" style="margin-left: auto; display: flex; align-items: center; gap: 1.5rem;">
+                <div class="search-box">
+                    <input type="text" placeholder="Ürün ara...">
+                    <button>
+                        <i class="fas fa-search"></i>
                     </button>
-                    <div class="profile-dropdown" id="profileDropdown">
-                        <div class="dropdown-header">
-                            <div class="user-welcome">
-                                <span>Hoş geldiniz</span>
-                                <strong id="welcomeUsername">Kullanıcı</strong>
+                </div>
+                <div class="user-menu">
+                    <div class="profile-menu" id="profileMenu" style="display: none;">
+                        <button class="profile-btn" onclick="toggleProfileDropdown()">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="profile-info">
+                                <span class="username" id="profileUsername">Kullanıcı</span>
+                                <span class="user-email" id="profileEmail">kullanici@email.com</span>
+                            </div>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="dropdown-header">
+                                <div class="user-welcome">
+                                    <span>Hoş geldiniz</span>
+                                    <strong id="welcomeUsername">Kullanıcı</strong>
+                                </div>
+                            </div>
+                            <div class="profile-menu-items">
+                                <a href="profile.html" class="profile-menu-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>Profilim</span>
+                                </a>
+                                <a href="orders.html" class="profile-menu-item">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    <span>Siparişlerim</span>
+                                    <span class="badge">2</span>
+                                </a>
+                                <a href="wishlist.html" class="profile-menu-item">
+                                    <i class="fas fa-heart"></i>
+                                    <span>Favorilerim</span>
+                                </a>
+                                <a href="addresses.html" class="profile-menu-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Adreslerim</span>
+                                </a>
+                                <div class="menu-divider"></div>
+                                <button class="profile-menu-item logout" onclick="handleLogout()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Çıkış Yap</span>
+                                </button>
                             </div>
                         </div>
-                        <div class="profile-menu-items">
-                            <a href="profile.html" class="profile-menu-item">
-                                <i class="fas fa-user"></i>
-                                <span>Profilim</span>
-                            </a>
-                            <a href="orders.html" class="profile-menu-item">
-                                <i class="fas fa-shopping-bag"></i>
-                                <span>Siparişlerim</span>
-                                <span class="badge">2</span>
-                            </a>
-                            <a href="wishlist.html" class="profile-menu-item">
-                                <i class="fas fa-heart"></i>
-                                <span>Favorilerim</span>
-                            </a>
-                            <a href="addresses.html" class="profile-menu-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Adreslerim</span>
-                            </a>
-                            <div class="menu-divider"></div>
-                            <button class="profile-menu-item logout" onclick="handleLogout()">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>Çıkış Yap</span>
-                            </button>
-                        </div>
+                    </div>
+                    <div class="auth-links" id="authLinks">
+                        <a href="login.html" class="auth-btn" id="loginBtn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Giriş Yap
+                        </a>
+                        <a href="register.html" class="auth-btn" id="registerBtn">
+                            <i class="fas fa-user-plus"></i>
+                            Kayıt Ol
+                        </a>
                     </div>
                 </div>
-                <!-- Giriş yapmamış kullanıcı için auth butonları -->
-                <div class="auth-links" id="authLinks">
-                    <a href="login.html" class="auth-btn" id="loginBtn">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Giriş Yap
-                    </a>
-                    <a href="register.html" class="auth-btn" id="registerBtn">
-                        <i class="fas fa-user-plus"></i>
-                        Kayıt Ol
+                <div class="cart-icon">
+                    <a href="cart.html">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
                     </a>
                 </div>
-            </div>
-            <div class="cart-icon">
-                <a href="cart.html">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-count">0</span>
-                </a>
             </div>
         </div>
     </nav>
@@ -295,9 +344,9 @@
             authLinks.style.display = 'none';
             
             // Kullanıcı bilgilerini güncelle
-            document.getElementById('profileUsername').textContent = userData.name || 'Kullanıcı';
+            document.getElementById('profileUsername').textContent = userData.full_name || 'Kullanıcı';
             document.getElementById('profileEmail').textContent = userData.email || '';
-            document.getElementById('welcomeUsername').textContent = userData.name || 'Kullanıcı';
+            document.getElementById('welcomeUsername').textContent = userData.full_name || 'Kullanıcı';
         } else {
             // Kullanıcı giriş yapmamış
             profileMenu.style.display = 'none';
@@ -342,8 +391,9 @@
 
     <main>
         <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
+        <section class="hero-modern">
+            <div class="hero-bg"></div>
+            <div class="hero-content-modern">
                 <h1>Yeni Sezon Ürünleri</h1>
                 <p>En yeni ürünleri keşfedin, en iyi fiyatlarla alışveriş yapın!</p>
                 <a href="products.html" class="cta-button">Alışverişe Başla</a>
@@ -353,7 +403,7 @@
         <!-- Kategoriler -->
         <section class="categories">
             <div class="container">
-                <h2 class="section-title">Popüler Kategoriler</h2>
+                <!-- <h2 class="section-title">Popüler Kategoriler</h2> -->
                 <div class="category-grid">
                     <!-- Kategoriler JavaScript ile yüklenecek -->
                     <div class="loading">
@@ -389,10 +439,10 @@
                             <span class="installment">12 x ₺1.249,99</span>
                         </div>
                         <div class="featured-actions">
-                            <button class="add-to-cart" onclick="cart.addToCart({id: 1, name: 'Modern Koltuk Takımı', price: 14999.99})">
+                            <!-- <button class="add-to-cart" onclick="cart.addToCart({id: 1, name: 'Modern Koltuk Takımı', price: 14999.99})">
                                 <i class="fas fa-shopping-cart"></i>
                                 Sepete Ekle
-                            </button>
+                            </button> -->
                             <button class="add-to-wishlist">
                                 <i class="fas fa-heart"></i>
                             </button>
@@ -417,10 +467,10 @@
                             <span class="installment">6 x ₺216,66</span>
                         </div>
                         <div class="featured-actions">
-                            <button class="add-to-cart" onclick="cart.addToCart({id: 2, name: 'LED Avize', price: 1299.99})">
+                            <!-- <button class="add-to-cart" onclick="cart.addToCart({id: 2, name: 'LED Avize', price: 1299.99})">
                                 <i class="fas fa-shopping-cart"></i>
                                 Sepete Ekle
-                            </button>
+                            </button> -->
                             <button class="add-to-wishlist">
                                 <i class="fas fa-heart"></i>
                             </button>
@@ -446,10 +496,10 @@
                             <span class="installment">3 x ₺299,99</span>
                         </div>
                         <div class="featured-actions">
-                            <button class="add-to-cart" onclick="cart.addToCart({id: 3, name: 'Yemek Takımı', price: 899.99})">
+                            <!-- <button class="add-to-cart" onclick="cart.addToCart({id: 3, name: 'Yemek Takımı', price: 899.99})">
                                 <i class="fas fa-shopping-cart"></i>
                                 Sepete Ekle
-                            </button>
+                            </button> -->
                             <button class="add-to-wishlist">
                                 <i class="fas fa-heart"></i>
                             </button>

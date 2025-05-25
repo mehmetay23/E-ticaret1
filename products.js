@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // URL'den kategori ID'sini al
     const urlParams = new URLSearchParams(window.location.search);
     const categoryId = urlParams.get('category');
+    const searchTerm = urlParams.get('search');
 
     // Kategorileri yükle
     async function loadCategories() {
@@ -49,13 +50,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Ürünleri yükle
-    async function loadProducts(categoryId = '') {
+    async function loadProducts(categoryId = '', searchTerm = '') {
         productGrid.innerHTML = '<div class="loading">Ürünler yükleniyor...</div>';
 
         try {
             let url = 'http://localhost:3000/api/products';
             if (categoryId) {
                 url += `/category/${categoryId}`;
+            }
+
+            if (searchTerm) {
+                url += `?search=${searchTerm}`;
             }
 
             const response = await fetch(url);
@@ -90,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         style: 'currency',
                         currency: 'TRY'
                     })}</p>
-                    <button onclick="addToCart(${product.id})" class="add-to-cart-btn">
+                    <button onclick="addToCart(${product.id})" class="add-to-cart">
                         <i class="fas fa-shopping-cart"></i>
                         Sepete Ekle
                     </button>
@@ -172,9 +177,41 @@ document.addEventListener('DOMContentLoaded', function() {
         sortProducts(sortSelect.value);
     });
 
-    // Sayfa yüklendiğinde
-    loadCategories();
-    loadProducts(categoryId);
+    // Sayfa yüklendiğinde çalışacak fonksiyonlar
+    if (typeof loadCategories === 'function') {
+        loadCategories();
+    }
+   
+    // Ürünleri yükle veya arama terimine göre filtrele
+    if (searchTerm) {
+        // Eğer arama terimi varsa, ürünleri arama terimine göre yükle/filtrele
+        // products.js içinde arama fonksiyonun varsa onu kullan
+        if (typeof loadProducts === 'function') {
+            loadProducts(categoryId, searchTerm); // loadProducts'a search term eklendiğini varsayıyoruz
+        } else if (typeof searchProducts === 'function') {
+            // Ya da sadece searchProducts fonksiyonu varsa, tüm ürünleri yükleyip filtrele
+            if (typeof loadProducts === 'function') {
+                loadProducts(categoryId).then(() => {
+                    searchProducts(searchTerm);
+                });
+            } else {
+                // products.js içinde loadProducts yoksa, API'den tüm ürünleri alıp filtrele
+                fetch('http://localhost:3000/api/products')
+                    .then(response => response.json())
+                    .then(products => {
+                        currentProducts = products; // Global veya uygun bir yere ata
+                        filteredProducts = products;
+                        searchProducts(searchTerm);
+                    })
+                    .catch(error => console.error('Ürünler yüklenirken hata:', error));
+            }
+        }
+    } else {
+        // Eğer arama terimi yoksa, kategoriye göre veya tüm ürünleri yükle
+        if (typeof loadProducts === 'function') {
+            loadProducts(categoryId);
+        }
+    }
 });
 
 // Sepete ekle

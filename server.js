@@ -26,6 +26,7 @@ const checkAdminRole = (req, res, next) => {
 };
 
 const app = express();
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 // CORS ayarları
 app.use(cors({
@@ -84,7 +85,7 @@ const authenticateToken = (req, res, next) => {
         return res.status(401).json({ error: 'Token bulunamadı' });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) {
             return res.status(403).json({ error: 'Geçersiz token' });
         }
@@ -136,37 +137,35 @@ app.get('/api/products/category/:categoryId', async (req, res) => {
     }
 });
 
-// Tüm ürünleri getir
+// Ürünleri getir
 app.get('/api/products', async (req, res) => {
-    try {
-        const result = await pool.query(`
-            SELECT p.*, c.name as category_name 
-            FROM products p
-            LEFT JOIN categories c ON p.category_id = c.id
-            ORDER BY p.id
-        `);
-        res.json(result.rows);
-    } catch (err) {
-        console.error('Ürünler yüklenirken hata:', err);
-        res.status(500).json({ error: 'Ürünler yüklenirken bir hata oluştu' });
-    }
+  try {
+    console.log('Ürünler isteği alındı');
+    const result = await pool.query('SELECT * FROM products ORDER BY created_at DESC');
+    console.log('Ürünler başarıyla getirildi:', result.rows);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Ürünler getirilirken hata:', error);
+    res.status(500).json({ message: 'Ürünler getirilirken bir hata oluştu' });
+  }
 });
 
-// Ürün detayını getir
+// Tek bir ürünü getir
 app.get('/api/products/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
-        
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Ürün bulunamadı' });
-        }
-        
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Sunucu hatası' });
+  try {
+    const { id } = req.params;
+    const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Ürün bulunamadı' });
     }
+    
+    console.log('Ürün başarıyla getirildi:', id);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Ürün getirilirken hata:', error);
+    res.status(500).json({ message: 'Ürün getirilirken bir hata oluştu' });
+  }
 });
 
 // Kategorileri getir
@@ -191,143 +190,112 @@ app.get('/api/categories', async (req, res) => {
 
 // Kullanıcı kaydı
 app.post('/api/auth/register', async (req, res) => {
-    const client = await pool.connect();
     try {
-        const { fullName, email, password, phone } = req.body;
+        const { full_name, email, password } = req.body;
+        console.log('Kayıt isteği alındı:', { full_name, email });
 
-        const userExists = await client.query(
-            'SELECT * FROM users WHERE email = $1',
-            [email]
-        );
-
+        // Email kontrolü
+        const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         if (userExists.rows.length > 0) {
-            return res.status(400).json({ error: 'Bu email adresi zaten kayıtlı' });
+            return res.status(400).json({ message: 'Bu email adresi zaten kayıtlı' });
         }
 
+        // Şifreyi hashle
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const result = await client.query(
-            `INSERT INTO users (full_name, email, password_hash, phone, created_at) 
-             VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) 
-             RETURNING id, full_name, email, phone`,
-            [fullName, email, hashedPassword, phone]
+        // Kullanıcıyı veritabanına kaydet
+        const result = await pool.query(
+            'INSERT INTO users (full_name, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5) RETURNING id, full_name, email, role, status',
+            [full_name, email, hashedPassword, 'user', 'active']
         );
 
-        const token = jwt.sign(
-            { userId: result.rows[0].id },
-            process.env.JWT_SECRET,
-            { expiresIn: '24h' }
-        );
+        const user = result.rows[0];
+        console.log('Kullanıcı başarıyla kaydedildi:', user);
 
-        res.json({
+        // JWT token oluştur
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' });
+
+        res.status(201).json({
             token,
             user: {
-                id: result.rows[0].id,
-                fullName: result.rows[0].full_name,
-                email: result.rows[0].email,
-                phone: result.rows[0].phone
+                id: user.id,
+                full_name: user.full_name,
+                email: user.email,
+                role: user.role,
+                status: user.status
             }
         });
-
     } catch (error) {
         console.error('Kayıt hatası:', error);
-        res.status(500).json({ error: 'Kayıt işlemi sırasında bir hata oluştu' });
-    } finally {
-        client.release();
+        res.status(500).json({ message: 'Kayıt işlemi sırasında bir hata oluştu' });
     }
 });
 
 // Kullanıcı girişi
 app.post('/api/auth/login', async (req, res) => {
-    const client = await pool.connect();
     try {
         const { email, password } = req.body;
-        console.log('Login attempt:', { email }); // Debug log
+        console.log('Giriş isteği alındı:', { email });
 
-        // Email ve şifre kontrolü
-        if (!email || !password) {
-            return res.status(400).json({ 
-                error: 'Email ve şifre gereklidir' 
-            });
-        }
-
-        // Kullanıcıyı veritabanında ara
-        const result = await client.query(
-            'SELECT * FROM users WHERE email = $1',
-            [email]
-        );
-
-        console.log('Query result:', { rowCount: result.rowCount }); // Debug log
-
-        if (result.rows.length === 0) {
-            return res.status(401).json({ 
-                error: 'Geçersiz email veya şifre' 
-            });
-        }
-
+        // Kullanıcıyı bul
+        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         const user = result.rows[0];
 
-        // Şifre kontrolü
-        const validPassword = await bcrypt.compare(password, user.password_hash);
-        console.log('Password check:', { validPassword }); // Debug log
+        if (!user) {
+            console.log('Kullanıcı bulunamadı:', email);
+            return res.status(401).json({ message: 'E-posta veya şifre hatalı' });
+        }
 
-        if (!validPassword) {
-            return res.status(401).json({ 
-                error: 'Geçersiz email veya şifre' 
-            });
+        // Şifreyi kontrol et
+        const isValidPassword = await bcrypt.compare(password, user.password_hash);
+        if (!isValidPassword) {
+            console.log('Şifre hatalı:', email);
+            return res.status(401).json({ message: 'E-posta veya şifre hatalı' });
         }
 
         // JWT token oluştur
-        const token = jwt.sign(
-            { 
-                userId: user.id,
-                email: user.email,
-                role: user.role || 'user'
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: '24h' }
-        );
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' });
+        console.log('Giriş başarılı:', user.email);
 
-        // Hassas bilgileri çıkar
-        delete user.password_hash;
-
-        // Başarılı yanıt
         res.json({
             token,
             user: {
                 id: user.id,
-                email: user.email,
                 full_name: user.full_name,
-                role: user.role || 'user'
+                email: user.email,
+                role: user.role,
+                status: user.status
             }
         });
-
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ 
-            error: 'Giriş işlemi sırasında bir hata oluştu' 
-        });
-    } finally {
-        client.release();
+        console.error('Giriş hatası:', error);
+        res.status(500).json({ message: 'Giriş işlemi sırasında bir hata oluştu' });
     }
 });
 
 // Profil bilgilerini getir
 app.get('/api/user/profile', authenticateToken, async (req, res) => {
+    const client = await pool.connect();
     try {
-        const result = await pool.query(
-            'SELECT id, username, email, full_name, phone, profile_image FROM users WHERE id = $1',
+        console.log('Profil isteği alındı. Kullanıcı ID:', req.user.userId);
+        
+        const result = await client.query(
+            'SELECT id, full_name, email, phone, role, status FROM users WHERE id = $1',
             [req.user.userId]
         );
         
         if (result.rows.length === 0) {
+            console.log('Kullanıcı bulunamadı:', req.user.userId);
             return res.status(404).json({ error: 'Kullanıcı bulunamadı' });
         }
         
+        console.log('Profil bilgileri başarıyla getirildi:', result.rows[0]);
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Sunucu hatası' });
+        console.error('Profil getirme hatası:', err);
+        res.status(500).json({ error: 'Profil bilgileri alınırken bir hata oluştu' });
+    } finally {
+        client.release();
     }
 });
 
@@ -342,6 +310,10 @@ app.put('/api/user/profile', authenticateToken, async (req, res) => {
                 'SELECT password_hash FROM users WHERE id = $1',
                 [req.user.userId]
             );
+            
+            if (user.rows.length === 0) {
+                return res.status(404).json({ error: 'Kullanıcı bulunamadı' });
+            }
             
             const validPassword = await bcrypt.compare(
                 currentPassword,
@@ -359,15 +331,33 @@ app.put('/api/user/profile', authenticateToken, async (req, res) => {
             );
         }
         
-        await client.query(
-            'UPDATE users SET full_name = $1, phone = $2 WHERE id = $3',
-            [fullName, phone, req.user.userId]
-        );
-        
-        res.json({ message: 'Profil güncellendi' });
+        if (fullName || phone) {
+            const result = await client.query(
+                'UPDATE users SET full_name = COALESCE($1, full_name), phone = COALESCE($2, phone) WHERE id = $3 RETURNING id, full_name, email, phone, role, status',
+                [fullName, phone, req.user.userId]
+            );
+            
+            if (result.rows.length === 0) {
+                return res.status(404).json({ error: 'Kullanıcı bulunamadı' });
+            }
+            
+            res.json(result.rows[0]);
+        } else {
+            // Güncel kullanıcı bilgilerini getir
+            const updatedUser = await client.query(
+                'SELECT id, full_name, email, phone, role, status FROM users WHERE id = $1',
+                [req.user.userId]
+            );
+            
+            if (updatedUser.rows.length === 0) {
+                return res.status(404).json({ error: 'Kullanıcı bulunamadı' });
+            }
+            
+            res.json(updatedUser.rows[0]);
+        }
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Güncelleme sırasında bir hata oluştu' });
+        console.error('Profil güncelleme hatası:', err);
+        res.status(500).json({ error: 'Profil güncellenirken bir hata oluştu' });
     } finally {
         client.release();
     }
