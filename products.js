@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // URL'den kategori ID'sini al
     const urlParams = new URLSearchParams(window.location.search);
     const categoryId = urlParams.get('category');
+<<<<<<< HEAD
     const searchTerm = urlParams.get('search');
+=======
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
 
     // Kategorileri yükle
     async function loadCategories() {
@@ -50,7 +53,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Ürünleri yükle
+<<<<<<< HEAD
     async function loadProducts(categoryId = '', searchTerm = '') {
+=======
+    async function loadProducts(categoryId = '') {
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
         productGrid.innerHTML = '<div class="loading">Ürünler yükleniyor...</div>';
 
         try {
@@ -59,10 +66,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 url += `/category/${categoryId}`;
             }
 
+<<<<<<< HEAD
             if (searchTerm) {
                 url += `?search=${searchTerm}`;
             }
 
+=======
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
             const response = await fetch(url);
             const products = await response.json();
 
@@ -95,7 +105,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         style: 'currency',
                         currency: 'TRY'
                     })}</p>
+<<<<<<< HEAD
                     <button onclick="addToCart(${product.id})" class="add-to-cart">
+=======
+                    <button onclick="addToCart(${product.id})" class="add-to-cart-btn">
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
                         <i class="fas fa-shopping-cart"></i>
                         Sepete Ekle
                     </button>
@@ -177,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sortProducts(sortSelect.value);
     });
 
+<<<<<<< HEAD
     // Sayfa yüklendiğinde çalışacak fonksiyonlar
     if (typeof loadCategories === 'function') {
         loadCategories();
@@ -212,6 +227,11 @@ document.addEventListener('DOMContentLoaded', function() {
             loadProducts(categoryId);
         }
     }
+=======
+    // Sayfa yüklendiğinde
+    loadCategories();
+    loadProducts(categoryId);
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
 });
 
 // Sepete ekle

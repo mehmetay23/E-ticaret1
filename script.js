@@ -2,6 +2,7 @@
 const API_URL = 'http://localhost:3000/api';
 window.showOrders = null; // showOrders değişkenini global olarak tanımla
 
+<<<<<<< HEAD
 // --- Öne Çıkan Ürünler Animasyonlu ---
 let allFeaturedProducts = [];
 let featuredInterval;
@@ -61,6 +62,8 @@ function showSequentialFeaturedProducts() {
 document.addEventListener('DOMContentLoaded', loadAnimatedFeaturedProducts);
 // --- Animasyon Sonu ---
 
+=======
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
 // Kategorileri yükle ve dropdown'a ekle
 async function loadCategories() {
     try {
@@ -86,6 +89,14 @@ async function loadCategories() {
                 .slice(0, 4) // İlk 4 kategoriyi al
                 .map(category => `
                     <a href="products.html?category=${category.id}" class="category-card">
+<<<<<<< HEAD
+=======
+                        <div class="category-image">
+                            <img src="${category.image_url}" 
+                                 alt="${category.name}"
+                                 onerror="handleImageError(this, 'category')">
+                        </div>
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
                         <div class="category-info">
                             <i class="${getCategoryIcon(category.name)}"></i>
                             <h3>${category.name}</h3>
@@ -96,6 +107,7 @@ async function loadCategories() {
                 `).join('');
         }
 
+<<<<<<< HEAD
         // Öne çıkan ürünleri güncelle (animasyonlu)
         let allFeaturedProducts = [];
         let featuredInterval;
@@ -155,6 +167,40 @@ async function loadCategories() {
         // Sayfa yüklendiğinde animasyonlu öne çıkan ürünler başlat
         if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
             document.addEventListener('DOMContentLoaded', loadAnimatedFeaturedProducts);
+=======
+        // Öne çıkan ürünleri güncelle
+        const featuredProducts = document.getElementById('featuredProducts');
+        if (featuredProducts) {
+            const allProducts = categories.flatMap(category => 
+                category.products || []
+            ).filter(Boolean);
+
+            // En yüksek fiyatlı 4 ürünü göster
+            const featured = allProducts
+                .sort((a, b) => b.price - a.price)
+                .slice(0, 4);
+
+            featuredProducts.innerHTML = featured.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="${product.image_url}" 
+                             alt="${product.name}"
+                             onerror="handleImageError(this, 'product')">
+                    </div>
+                    <div class="product-info">
+                        <h3>${product.name}</h3>
+                        <p class="price">${product.price.toLocaleString('tr-TR', {
+                            style: 'currency',
+                            currency: 'TRY'
+                        })}</p>
+                        <button onclick="addToCart(${product.id})" class="add-to-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            Sepete Ekle
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
         }
     } catch (error) {
         console.error('Kategoriler yüklenirken hata:', error);
@@ -177,11 +223,15 @@ function getCategoryIcon(categoryName) {
 // Kategoriye göre ürünleri yükle
 async function loadProductsByCategory(categoryId) {
     try {
+<<<<<<< HEAD
         console.log('Ürünler yükleniyor... Kategori ID:', categoryId);
+=======
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
         const url = categoryId 
             ? `${API_URL}/products/category/${categoryId}`
             : `${API_URL}/products`;
             
+<<<<<<< HEAD
         console.log('API URL:', url);
         const response = await fetch(url);
         
@@ -197,12 +247,20 @@ async function loadProductsByCategory(categoryId) {
             console.error('productGrid elementi bulunamadı!');
             return;
         }
+=======
+        const response = await fetch(url);
+        const products = await response.json();
+        
+        const productGrid = document.getElementById('productGrid');
+        if (!productGrid) return;
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
 
         if (products.length === 0) {
             productGrid.innerHTML = '<p class="no-products">Bu kategoride ürün bulunamadı.</p>';
             return;
         }
 
+<<<<<<< HEAD
         productGrid.innerHTML = products.map(product => {
             // Resim URL'sini kontrol et
             const imageUrl = product.image_url && product.image_url.trim() !== '' 
@@ -238,6 +296,31 @@ async function loadProductsByCategory(categoryId) {
         if (productGrid) {
             productGrid.innerHTML = '<p class="error-message">Ürünler yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.</p>';
         }
+=======
+        productGrid.innerHTML = products.map(product => `
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="${product.image_url}" 
+                         alt="${product.name}"
+                         onerror="handleImageError(this, 'product')">
+                </div>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p class="category">${product.category_name}</p>
+                    <p class="price">${product.price.toLocaleString('tr-TR', {
+                        style: 'currency',
+                        currency: 'TRY'
+                    })}</p>
+                    <button onclick="addToCart(${product.id})" class="add-to-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        Sepete Ekle
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Ürünler yüklenirken hata:', error);
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
     }
 }
 
@@ -271,6 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Sepet sayısını güncelle
     updateCartCount();
+<<<<<<< HEAD
 
     // Arama kutusu fonksiyonelliği
     const searchInput = document.querySelector('.search-box input');
@@ -297,6 +381,8 @@ document.addEventListener('DOMContentLoaded', function() {
             performSearch();
         });
     }
+=======
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
 });
 
 // Kategori dropdown'ını ayarla
@@ -721,7 +807,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Resim yükleme hatası için fallback fonksiyonu
 function handleImageError(img, type = 'product') {
+<<<<<<< HEAD
     // Varsayılan placeholder resimleri
+=======
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
     const placeholders = {
         'brand': 'https://via.placeholder.com/150x50?text=Marka+Logo',
         'user': 'https://via.placeholder.com/80x80?text=Kullanıcı',
@@ -730,6 +819,7 @@ function handleImageError(img, type = 'product') {
         'hero': 'https://via.placeholder.com/1920x600?text=Hero+Görsel'
     };
 
+<<<<<<< HEAD
     // Eğer resim URL'si boş veya geçersizse
     if (!img.src || img.src === 'undefined' || img.src === 'null') {
         img.src = placeholders[type] || placeholders.product;
@@ -739,13 +829,26 @@ function handleImageError(img, type = 'product') {
     // Resim yüklenemezse placeholder'a geç
     img.onerror = null; // Sonsuz döngüyü önle
     img.src = placeholders[type] || placeholders.product;
+=======
+    // Varsayılan placeholder resmi
+    const fallbackImage = placeholders[type] || placeholders.product;
+    
+    // Resmi değiştir
+    img.src = fallbackImage;
+    
+    // Hata tekrarı önle
+    img.onerror = null;
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
     
     // Alt text ekle
     if (!img.alt) {
         img.alt = type.charAt(0).toUpperCase() + type.slice(1) + ' Resmi';
     }
+<<<<<<< HEAD
 
     console.log(`Resim yükleme hatası: ${type} resmi için placeholder kullanıldı`);
+=======
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
 }
 
 // Ürünleri görüntüle
@@ -776,7 +879,10 @@ async function displayProducts(categoryId = null) {
                 <div class="product-info">
                     <h3>${product.name}</h3>
                     <p class="category">${product.category_name}</p>
+<<<<<<< HEAD
                     <p class="product-description">${product.description || ''}</p>
+=======
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
                     <p class="price">${product.price.toLocaleString('tr-TR', {
                         style: 'currency',
                         currency: 'TRY'
@@ -880,7 +986,10 @@ function displayFilteredProducts(products) {
             <div class="product-info">
                 <h3>${product.name}</h3>
                 <p class="category">${product.category_name}</p>
+<<<<<<< HEAD
                 <p class="product-description">${product.description || ''}</p>
+=======
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
                 <p class="price">${product.price.toLocaleString('tr-TR', {
                     style: 'currency',
                     currency: 'TRY'
@@ -1137,11 +1246,22 @@ async function loadFeaturedProducts() {
                 <div class="product-info">
                     <h3>${product.name}</h3>
                     <p class="category">${product.category_name || 'Genel'}</p>
+<<<<<<< HEAD
                     <p class="product-description">${product.description || ''}</p>
+=======
+                    <p class="description">${product.description || ''}</p>
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
                     <p class="price">${product.price.toLocaleString('tr-TR', {
                         style: 'currency',
                         currency: 'TRY'
                     })}</p>
+<<<<<<< HEAD
+=======
+                    <button onclick="cart.addToCart(${product.id})" class="add-to-cart-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        Sepete Ekle
+                    </button>
+>>>>>>> 26c0ea1a0b02e23e6cd98f5a79e2fddfc59bbe10
                 </div>
             </div>
         `).join('');
